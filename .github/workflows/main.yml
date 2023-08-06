@@ -31,12 +31,11 @@ jobs:
       run: chmod +x ./gradlew
       working-directory: Android
     - name: Decode Base64 Keystore
-      run: echo "${{ secrets.KEYFILE }}" | base64 -d > app/my-release-key.keystore
-      working-directory: Android
+      run: echo "${{ secrets.KEYFILE }}" | base64 -d > Android/my-release-key.keystore
     - name: Build and Sign APK
       run: |
         ./gradlew assembleRelease \
-        -Pandroid.injected.signing.store.file=my-release-key.keystore \
+        -Pandroid.injected.signing.store.file=Android/my-release-key.keystore \
         -Pandroid.injected.signing.store.password=${{ secrets.KEY_PASSWORD }} \
         -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
         -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
