@@ -108,11 +108,12 @@ jobs:
       - name: Zip EXE and DLL
         run: |
           zip PenFerry-Windows.zip penferry.exe SynthPointer.dll
+      - name: List files
+        run: ls -alih
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            LICENSE
             PenFerry-Release.apk
             PenFerry-Windows.zip
             PenFerryInstaller.exe
