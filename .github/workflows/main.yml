@@ -31,7 +31,7 @@ jobs:
       run: chmod +x ./gradlew
       working-directory: Android
     - name: Decode Base64 Keystore
-      run: echo "${{ secrets.KEYFILE }}" | base64 -d > my-release-key.keystore
+      run: echo "${{ secrets.KEYFILE }}" | base64 -d > app/my-release-key.keystore
       working-directory: Android
     - name: Build and Sign APK
       run: |
