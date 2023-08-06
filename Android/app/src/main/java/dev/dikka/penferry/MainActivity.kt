@@ -199,6 +199,15 @@ class MainActivity : ComponentActivity() {
                                                 )
                                             }
                                         }
+
+                                        MotionEvent.ACTION_POINTER_1_UP -> {
+                                            if (it.getToolType(1) == TOOL_TYPE_FINGER) {
+                                                PenPacket(PenEvent.SUPP_ACTION).send(
+                                                    Preferences.address,
+                                                    Preferences.port
+                                                )
+                                            }
+                                        }
                                     }
                                     true
                                 }

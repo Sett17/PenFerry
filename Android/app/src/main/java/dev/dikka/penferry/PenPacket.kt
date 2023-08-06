@@ -14,6 +14,7 @@ enum class PenEvent(val id: Byte) {
     CONTACT_MOVE(0x20),
     CONTACT_DOWN(0x22),
     CONTACT_UP(0x21),
+    SUPP_ACTION(0x0F),
     DUMMY(0x00);
 
     companion object {
