@@ -29,12 +29,12 @@ jobs:
         java-version: '17'
     - name: Decode signing key
       run: echo "${{ secrets.KEYSTORE }}" | base64 -d > app-signing.jks
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
     - name: Build and Sign APK
       run: |
         cd Android
         ./gradlew assembleRelease -Pandroid.injected.signing.store.file=../app-signing.jks -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
     - name: Upload APK as artifact
       uses: actions/upload-artifact@v3
       with:
