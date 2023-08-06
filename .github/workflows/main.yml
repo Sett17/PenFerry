@@ -36,6 +36,8 @@ jobs:
         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       working-directory: Android
+    - name: Figure out where the apk is...
+      run: find . -name "*.apk"
     - name: Upload APK as artifact
       uses: actions/upload-artifact@v3
       with:
