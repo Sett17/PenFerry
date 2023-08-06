@@ -1,9 +1,9 @@
 package dev.dikka.penferry
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
-import android.view.MotionEvent.BUTTON_STYLUS_PRIMARY
-import android.view.MotionEvent.TOOL_TYPE_STYLUS
+import android.view.MotionEvent.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -23,7 +23,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.CoroutineScope
 
 enum class Ratios {
     R16_9 {
@@ -71,7 +70,8 @@ class MainActivity : ComponentActivity() {
                         Modifier
                             .height(75.dp)
                             .width(320.dp)
-                            .padding(start = 3.dp, top = 8.dp), 9.sp)
+                            .padding(start = 3.dp, top = 8.dp), 9.sp
+                    )
                     Column(
                         Modifier
                             .padding(12.dp)
@@ -141,7 +141,7 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.width(120.dp)
                             )
                         }
-                        Spacer(Modifier.height(12 .dp))
+                        Spacer(Modifier.height(12.dp))
                         val canvasSize = remember { mutableStateOf(IntSize.Zero) }
                         val pos = remember { mutableStateOf(Pair(0f, 0f)) }
                         val inRange = remember { mutableStateOf(false) }
@@ -163,7 +163,8 @@ class MainActivity : ComponentActivity() {
                                                 buttonPressed = it.buttonState == BUTTON_STYLUS_PRIMARY
                                             ).send(Preferences.address, Preferences.port)
                                         }
-                                        MotionEvent.ACTION_MOVE, 213       -> {
+
+                                        MotionEvent.ACTION_MOVE, 213 -> {
                                             if (it.getToolType(0) == TOOL_TYPE_STYLUS) {
                                                 pos.value = Pair(it.x, it.y)
                                                 PenPacket(
@@ -175,18 +176,27 @@ class MainActivity : ComponentActivity() {
                                                 ).send(Preferences.address, Preferences.port)
                                             }
                                         }
+
                                         MotionEvent.ACTION_HOVER_EXIT -> {
                                             inRange.value = false
                                             PenPacket(PenEvent.HOVER_EXIT).send(Preferences.address, Preferences.port)
                                         }
-                                        MotionEvent.ACTION_DOWN       -> {
+
+                                        MotionEvent.ACTION_DOWN -> {
                                             if (it.getToolType(0) == TOOL_TYPE_STYLUS) {
-                                                PenPacket(PenEvent.CONTACT_DOWN).send(Preferences.address, Preferences.port)
+                                                PenPacket(PenEvent.CONTACT_DOWN).send(
+                                                    Preferences.address,
+                                                    Preferences.port
+                                                )
                                             }
                                         }
-                                        MotionEvent.ACTION_UP         -> {
+
+                                        MotionEvent.ACTION_UP -> {
                                             if (it.getToolType(0) == TOOL_TYPE_STYLUS) {
-                                                PenPacket(PenEvent.CONTACT_UP).send(Preferences.address, Preferences.port)
+                                                PenPacket(PenEvent.CONTACT_UP).send(
+                                                    Preferences.address,
+                                                    Preferences.port
+                                                )
                                             }
                                         }
                                     }
