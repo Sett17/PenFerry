@@ -89,31 +89,25 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
       - name: Download APK artifact
         uses: actions/download-artifact@v3
         with:
           name: PenFerry-Release.apk
-
       - name: Download Go EXE artifact
         uses: actions/download-artifact@v3
         with:
           name: penferry.exe
-
       - name: Download DLL artifact
         uses: actions/download-artifact@v3
         with:
           name: SynthPointer.dll
-
       - name: Download Installer artifact
         uses: actions/download-artifact@v3
         with:
           name: PenFerryInstaller.exe
-
       - name: Zip EXE and DLL
         run: |
           zip PenFerry-Windows.zip penferry.exe SynthPointer.dll
-
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v1
         with:
@@ -121,5 +115,3 @@ jobs:
             PenFerry-Release.apk
             PenFerry-Windows.zip
             PenFerryInstaller.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
