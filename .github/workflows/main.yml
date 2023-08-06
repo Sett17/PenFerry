@@ -30,14 +30,17 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
       working-directory: Android
-    - name: Build and Sign APK
-      run: ./gradlew assembleRelease
-      env:
-        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+    - name: Decode Base64 Keystore
+      run: echo "${{ secrets.KEYFILE }}" | base64 -d > my-release-key.keystore
       working-directory: Android
-    - name: Figure out where the apk is...
-      run: find . -name "*.apk"
+    - name: Build and Sign APK
+      run: |
+        ./gradlew assembleRelease \
+        -Pandroid.injected.signing.store.file=my-release-key.keystore \
+        -Pandroid.injected.signing.store.password=${{ secrets.KEY_PASSWORD }} \
+        -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+        -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+      working-directory: Android
     - name: Upload APK as artifact
       uses: actions/upload-artifact@v3
       with:
