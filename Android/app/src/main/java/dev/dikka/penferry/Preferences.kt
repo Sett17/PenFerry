@@ -12,7 +12,7 @@ object Preferences {
 
     private const val PREF_ADDRESS_KEY = "penferry.address"
     var address: String
-        get() = prefs.getString(PREF_ADDRESS_KEY, "192.168.190.4") ?: "192.168.0.4"
+        get() = prefs.getString(PREF_ADDRESS_KEY, "192.168.0.2") ?: "192.168.0.2"
         set(value) = prefs.edit().putString(PREF_ADDRESS_KEY, value).apply()
 
     private const val PREF_PORT_KEY = "penferry.port"
