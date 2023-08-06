@@ -30,21 +30,14 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
       working-directory: Android
-    - name: Decode Base64 Keystore
-      run: echo "${{ secrets.KEYFILE }}" | base64 -d > /home/runner/my-release-key.keystore
     - name: Build and Sign APK
-      run: |
-        ./gradlew assembleRelease \
-        -Pandroid.injected.signing.store.file=/home/runner/my-release-key.keystore \
-        -Pandroid.injected.signing.store.password=${{ secrets.KEY_PASSWORD }} \
-        -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
-        -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+      run: ./gradlew assembleRelease
       working-directory: Android
     - name: Upload APK as artifact
       uses: actions/upload-artifact@v3
       with:
         name: PenFerry-Release.apk
-        path: Android/app/release/app-release.apk
+        path: Android/app/release/app-release-unsigned.apk
 
   build-go:
     runs-on: windows-latest
