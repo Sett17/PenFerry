@@ -33,14 +33,12 @@ jobs:
     - name: Build and Sign APK
       run: ./gradlew assembleRelease
       working-directory: Android
-    - name: find apk
-      run: find . -name "*.apk"
     - name: Upload APK as artifact
       uses: actions/upload-artifact@v3
       with:
         name: PenFerry-Release.apk
-        path: Android/app/release/app-release-unsigned.apk
-
+        path: Android/app/build/outputs/apk/release/app-release-unsigned.apk
+          
   build-go:
     runs-on: windows-latest
     steps:
