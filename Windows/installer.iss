@@ -1,6 +1,6 @@
 [Setup]
 AppName=PenFerry
-AppVersion=1.0
+AppVersion=1.1.1
 DefaultDirName={commonpf}\PenFerry
 OutputBaseFilename=PenFerryInstaller
 
