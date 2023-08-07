@@ -92,7 +92,7 @@ func performAction(synthPointer *synthpointer.SyntheticPointer, packet *penpacke
 	case penpacket.HOVER_MOVE:
 		return synthPointer.HoverMove(packet.Arg1, packet.Arg2, packet.ButtonPressed)
 	case penpacket.CONTACT_MOVE:
-		return synthPointer.ContactMove(packet.Arg1, packet.Arg2, packet.ButtonPressed, uint32(packet.Arg3))
+		return synthPointer.ContactMove(packet.Arg1, packet.Arg2, packet.ButtonPressed, uint32(packet.Arg3 * 1024))
 	case penpacket.HOVER_EXIT:
 		return synthPointer.HoverExit()
 	case penpacket.CONTACT_DOWN:
