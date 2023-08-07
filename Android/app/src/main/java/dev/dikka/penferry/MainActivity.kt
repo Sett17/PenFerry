@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.MotionEvent.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.PointMode
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +28,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlin.time.DurationUnit
+import kotlin.time.ExperimentalTime
 
 enum class Ratios {
     R16_9 {
@@ -43,8 +51,11 @@ enum class Ratios {
 
 }
 
+const val TAG = "KRANKMAN"
+
 lateinit var output: Output
 
+@OptIn(ExperimentalTime::class)
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -145,10 +156,25 @@ class MainActivity : ComponentActivity() {
                         val canvasSize = remember { mutableStateOf(IntSize.Zero) }
                         val pos = remember { mutableStateOf(Pair(0f, 0f)) }
                         val inRange = remember { mutableStateOf(false) }
-                        Box(
+
+                        val points = remember { OffsetRing(100) }
+                        LaunchedEffect(points) {
+                            while (true) {
+                                delay(250)
+                                if (points.lastTime.elapsedNow().toDouble(DurationUnit.MILLISECONDS) > 250) {
+                                    var decays = 0
+                                    while (points.decayPoint()){
+                                        decays++
+                                        delay(1500L/points.size)
+                                    }
+                                }
+                            }
+                        }
+                        val pointColor = MaterialTheme.colorScheme.tertiary
+                        Canvas(
                             Modifier
                                 .aspectRatio(selectedRatio.toFloat())
-                                .border(2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.extraLarge)
+                                .border(2.dp, MaterialTheme.colorScheme.tertiaryContainer, MaterialTheme.shapes.extraLarge)
                                 .onGloballyPositioned {
                                     canvasSize.value = it.size
                                 }
@@ -156,6 +182,7 @@ class MainActivity : ComponentActivity() {
                                     when (it.action) {
                                         MotionEvent.ACTION_HOVER_MOVE -> {
                                             pos.value = Pair(it.x, it.y)
+                                            points.push(Offset(it.x, it.y))
                                             PenPacket(
                                                 PenEvent.HOVER_MOVE,
                                                 it.x / canvasSize.value.width,
@@ -164,9 +191,10 @@ class MainActivity : ComponentActivity() {
                                             ).send(Preferences.address, Preferences.port)
                                         }
 
-                                        MotionEvent.ACTION_MOVE, 213 -> {
+                                        MotionEvent.ACTION_MOVE -> {
                                             if (it.getToolType(0) == TOOL_TYPE_STYLUS) {
                                                 pos.value = Pair(it.x, it.y)
+                                                points.push(Offset(it.x, it.y))
                                                 PenPacket(
                                                     PenEvent.CONTACT_MOVE,
                                                     it.x / canvasSize.value.width,
@@ -179,7 +207,10 @@ class MainActivity : ComponentActivity() {
 
                                         MotionEvent.ACTION_HOVER_EXIT -> {
                                             inRange.value = false
-                                            PenPacket(PenEvent.HOVER_EXIT).send(Preferences.address, Preferences.port)
+                                            PenPacket(PenEvent.HOVER_EXIT).send(
+                                                Preferences.address,
+                                                Preferences.port
+                                            )
                                         }
 
                                         MotionEvent.ACTION_DOWN -> {
@@ -209,10 +240,19 @@ class MainActivity : ComponentActivity() {
                                             }
                                         }
                                     }
+                                    Log.d(TAG, "${points.list()}")
                                     true
                                 }
                         ) {
-
+                            if (points.full()) {
+                                drawPoints(
+                                    points.list(),
+                                    PointMode.Polygon,
+                                    pointColor,
+                                    strokeWidth = 2f,
+                                    cap = StrokeCap.Round,
+                                )
+                            }
                         }
                     }
                 }
